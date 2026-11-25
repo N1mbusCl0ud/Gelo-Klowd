@@ -41,8 +41,13 @@ const View = {
   },
 
   renderTimeline(items) {
+    const pin = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
     this.el.timeline.innerHTML = items.map(i =>
-      `<li class="${i.now ? "now" : ""}"><h3>${this.esc(i.role)}</h3><span>${this.esc(i.details)}</span></li>`
+      `<li class="${i.now ? "now" : ""}"><div class="t-card">
+         <div class="t-top"><h3>${this.esc(i.role)}</h3><span class="t-period">${i.now ? '<span class="dot"></span>' : ""}${this.esc(i.period)}</span></div>
+         <div class="t-org">${pin}<span>${this.esc(i.org)} · ${this.esc(i.place)}</span></div>
+         <p class="t-sum">${this.esc(i.summary)}</p>
+       </div></li>`
     ).join("");
   },
 
@@ -55,8 +60,8 @@ const View = {
   },
 
   renderProjects(projects, illustrations) {
-    this.el.track.innerHTML = projects.map(p =>
-      `<article class="card">
+    this.el.track.innerHTML = projects.map((p, n) =>
+      `<article class="card" data-i="${n}" tabindex="0" role="button" aria-label="Open details: ${this.esc(p.title)}">
          <div class="pic">${illustrations[p.art]}</div>
          <div class="desc">
            <h3>${this.esc(p.title)}</h3>
@@ -149,6 +154,25 @@ const View = {
   openPalette() { const p = document.getElementById("palette"); p.hidden = false; const i = document.getElementById("paletteInput"); i.value = ""; i.focus(); },
   closePalette() { document.getElementById("palette").hidden = true; },
   paletteIsOpen() { return !document.getElementById("palette").hidden; },
+
+  // ----- Project pop-up -----
+  openProject(p, illustrations) {
+    document.getElementById("modalPic").innerHTML = illustrations[p.art];
+    document.getElementById("modalTitle").textContent = p.title;
+    document.getElementById("modalDesc").textContent = p.description;
+    document.getElementById("modalList").innerHTML = (p.highlights || []).map(h => `<li>${this.esc(h)}</li>`).join("");
+    document.getElementById("modalTags").textContent = p.tags.join(" · ");
+    const link = document.getElementById("modalLink");
+    const hasLink = p.link && p.link !== "#";
+    link.hidden = !hasLink;
+    if (hasLink) link.href = p.link;
+    document.getElementById("modal").hidden = false;
+    document.body.style.overflow = "hidden";           // the page behind does not scroll
+    document.getElementById("modalClose").focus();
+  },
+  closeProject() { document.getElementById("modal").hidden = true; document.body.style.overflow = ""; },
+  modalIsOpen() { return !document.getElementById("modal").hidden; },
+  setClock(text) { document.getElementById("clock").textContent = text; },
 
   // ----- Extras -----
   setParallax(px, py) {   // clouds shift a little with the mouse (each cloud has its own depth)

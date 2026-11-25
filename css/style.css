@@ -385,3 +385,90 @@ h2::after { background: linear-gradient(90deg, var(--accent), #c9dcff, var(--acc
   .entry, .palette-box, h2::after, .contact-box { animation: none; }
   .cloud { translate: none; }
 }
+
+/* =========================================================
+   v4: polish (looks, hover, transitions, pop-up)
+   ========================================================= */
+
+/* ----- Skip link (keyboard users) ----- */
+.skip { position: fixed; left: 1rem; top: -4rem; z-index: 100; padding: .6rem 1rem; border-radius: 8px; background: var(--accent); color: #0d1219; font-weight: 500; transition: top .2s; }
+.skip:focus { top: 1rem; }
+
+/* ----- Soft glowing background orbs behind the whole page ----- */
+body::before, body::after { content: ""; position: fixed; z-index: -1; width: 46vmax; height: 46vmax; border-radius: 50%; filter: blur(80px); opacity: .12; pointer-events: none; will-change: transform; }
+body::before { background: #4f7cff; top: -16vmax; left: -12vmax; animation: orbA 30s ease-in-out infinite alternate; }
+body::after { background: #66d9c8; bottom: -22vmax; right: -16vmax; animation: orbB 36s ease-in-out infinite alternate; }
+@keyframes orbA { to { transform: translate(20vmax, 14vmax) scale(1.15); } }
+@keyframes orbB { to { transform: translate(-18vmax, -10vmax) scale(1.2); } }
+
+/* ----- Section numbers above each heading ----- */
+main { counter-reset: sec; }
+section:not(.hero) h2::before { counter-increment: sec; content: "0" counter(sec); display: block; margin-bottom: .6rem; font: 500 .8rem var(--font-body); letter-spacing: .25em; color: var(--accent); }
+
+/* ----- Nav links: underline grows from the left ----- */
+nav a { border-bottom: 0; background: linear-gradient(var(--accent), var(--accent)) left bottom / 0 2px no-repeat; transition: background-size .3s ease, color .2s; }
+nav a:hover, nav a.active { background-size: 100% 2px; }
+
+/* ----- Primary button: light sweep on hover ----- */
+.btn.primary { position: relative; overflow: hidden; }
+.btn.primary::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%); translate: -120% 0; transition: translate .6s ease; }
+.btn.primary:hover::after { translate: 120% 0; }
+
+/* ----- Timeline cards ----- */
+.timeline { padding-left: 1.75rem; }
+.timeline li { padding-bottom: 1.25rem; }
+.timeline li::before { top: 1.45rem; left: calc(-1.75rem - 5px); }
+.timeline li.reveal { translate: -24px 0; }
+.timeline li.reveal.in { translate: 0 0; }
+.t-card { padding: 1.1rem 1.25rem; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); transition: border-color .25s, translate .25s, box-shadow .25s; }
+.timeline li:hover .t-card { border-color: var(--accent); translate: 6px 0; box-shadow: 0 14px 34px rgba(0,0,0,.28); }
+.timeline li.now .t-card { border-color: rgba(143,184,255,.45); }
+.t-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: .5rem .75rem; }
+.timeline .t-period { display: inline-flex; align-items: center; gap: .45rem; padding: .2rem .75rem; border: 1px solid var(--line); border-radius: 999px; font-size: .78rem; white-space: nowrap; }
+.timeline li.now .t-period { border-color: var(--accent); color: var(--accent); }
+.t-org { display: flex; align-items: center; gap: .45rem; margin: .4rem 0 .5rem; color: var(--muted); }
+.t-org svg { width: 15px; height: 15px; flex: none; fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.t-sum { margin: 0; color: var(--muted); font-size: .98rem; }
+
+/* ----- Project hint, "View" cursor label ----- */
+.hint { margin-left: auto; align-self: center; color: var(--muted); font-size: .85rem; }
+.cursor { z-index: 90; }
+.cursor::after { content: attr(data-label); position: absolute; inset: 0; display: grid; place-items: center; font: 500 .8rem var(--font-body); color: var(--accent); }
+.card:focus-visible { outline-offset: 4px; }
+
+/* ----- Project pop-up ----- */
+.modal { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 1rem; background: rgba(5,8,12,.72); backdrop-filter: blur(8px); animation: fade .25s ease both; }
+.modal[hidden] { display: none; }
+.modal-box { position: relative; width: min(760px, 100%); max-height: 90vh; overflow-y: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 40px 100px rgba(0,0,0,.55); animation: popin .4s cubic-bezier(.2,.9,.3,1.15) both; }
+.modal-pic { border-radius: 0; border-bottom: 1px solid var(--line); }
+.modal-body { padding: 1.5rem 1.75rem 1.75rem; }
+.modal-body h3 { margin: 0 0 .6rem; font: 700 1.6rem/1.2 var(--font-head); }
+.modal-body p { color: var(--muted); margin: 0 0 1rem; }
+.modal-body ul { list-style: none; margin: 0 0 1.25rem; padding: 0; display: grid; gap: .5rem; }
+.modal-body li { position: relative; padding-left: 1.5rem; }
+.modal-body li::before { content: ""; position: absolute; left: 0; top: .6em; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.modal-actions { display: flex; flex-wrap: wrap; margin-top: 1.25rem; }
+.modal-close { position: absolute; right: .9rem; top: .9rem; z-index: 2; width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 50%; background: rgba(13,18,25,.7); color: var(--text); font-size: 1.5rem; line-height: 1; cursor: pointer; transition: border-color .2s, rotate .3s; }
+.modal-close:hover { border-color: var(--accent); rotate: 90deg; }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popin { from { opacity: 0; transform: translateY(24px) scale(.94); } to { opacity: 1; transform: none; } }
+
+/* ----- Footer ----- */
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1.5rem; }
+@media (max-width: 760px) { .foot-hint { display: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  body::before, body::after, .modal, .modal-box { animation: none; }
+  .timeline li.reveal { translate: none; }
+}
+
+/* ----- Layout fixes: header cluster on the right, shorter pop-up picture ----- */
+.logo { flex: 1; }
+.kbd { margin-left: auto; }
+.modal-pic { aspect-ratio: 16 / 7; }
+.modal-pic svg { height: 100%; }
+@media (max-width: 760px) { .logo { flex: 0 1 auto; } .menu-btn { margin-left: auto; } }
+.kbd { margin-left: 1.5rem; }
+.btn { vertical-align: top; }               /* keeps both hero buttons on one line */
+.hero .hi { position: relative; z-index: 2; }   /* greeting stays readable above the clouds */
+@media (max-width: 760px) { .kbd { margin-left: 0; } }

@@ -17,9 +17,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Gelo","alternateName":"Klowd","jobTitle":"IT Support, Networks and Database","description":"IT graduate working in IT support for networks and databases, helping implement SAP Business One."}</script>
 </head>
 
 <body>
+  <a class="skip" href="#about">Skip to content</a>
   <div class="page-progress" id="pageProgress"></div>
   <div class="cursor" id="cursor" aria-hidden="true"></div>
   <!-- ========== HEADER ========== -->
@@ -117,6 +119,7 @@
         <div class="ctrl">
           <button id="prev" aria-label="Previous project">‹</button>
           <button id="next" aria-label="Next project">›</button>
+          <span class="hint">Click a card for details</span>
         </div>
         <div class="bar"><span id="barFill"></span></div>
       </div>
@@ -182,9 +185,26 @@
   </main>
 
   <footer>
-    <div class="wrap">© <span id="year"></span> Gelo a.k.a Klowd</div>
+    <div class="wrap foot"><span>© <span id="year"></span> Gelo a.k.a Klowd</span><span id="clock"></span><span class="foot-hint">Press Ctrl K to navigate</span></div>
   </footer>
 
+  <div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-box">
+      <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+      <div class="modal-pic pic" id="modalPic"></div>
+      <div class="modal-body">
+        <h3 id="modalTitle"></h3>
+        <p id="modalDesc"></p>
+        <ul id="modalList"></ul>
+        <p class="tags" id="modalTags"></p>
+        <div class="modal-actions">
+          <a class="btn primary" id="modalLink" target="_blank" rel="noopener" hidden>View project</a>
+          <button class="btn" id="modalPrev" type="button">Previous</button>
+          <button class="btn" id="modalNext" type="button">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="palette" id="palette" hidden role="dialog" aria-modal="true" aria-label="Quick navigation">
     <div class="palette-box">
       <input id="paletteInput" placeholder="Jump to a section or action…" aria-label="Search sections and actions" autocomplete="off">

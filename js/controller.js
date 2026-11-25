@@ -33,6 +33,8 @@ const Controller = {
     this.startVisitors();
     this.bindGuestForm();
     this.bindPalette();
+    this.bindModal();
+    this.startClock();
     document.getElementById("topBtn").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
   },
 
@@ -206,6 +208,38 @@ const Controller = {
     } else if (cmd.action === "linkedin" || cmd.action === "github") {
       window.open(Model.profile.links[cmd.action], "_blank", "noopener");
     }
+  },
+
+  // ----- Project pop-up: click a card (or press Enter on it) -----
+  modalIndex: 0, lastFocus: null,
+  bindModal() {
+    const show = (i, trigger) => {
+      if (trigger) this.lastFocus = trigger;
+      const n = Model.projects.length;
+      this.modalIndex = (i + n) % n;
+      View.openProject(Model.projects[this.modalIndex], Model.illustrations);
+    };
+    View.el.track.addEventListener("click", e => { const c = e.target.closest(".card"); if (c) show(Number(c.dataset.i), c); });
+    View.el.track.addEventListener("keydown", e => {
+      if ((e.key === "Enter" || e.key === " ") && e.target.matches(".card")) { e.preventDefault(); show(Number(e.target.dataset.i), e.target); }
+    });
+    const close = () => { View.closeProject(); if (this.lastFocus) this.lastFocus.focus(); };
+    document.getElementById("modalClose").addEventListener("click", close);
+    document.getElementById("modalPrev").addEventListener("click", () => show(this.modalIndex - 1));
+    document.getElementById("modalNext").addEventListener("click", () => show(this.modalIndex + 1));
+    document.getElementById("modal").addEventListener("click", e => { if (e.target.id === "modal") close(); });
+    document.addEventListener("keydown", e => {
+      if (!View.modalIsOpen()) return;
+      if (e.key === "Escape") close();
+      if (e.key === "ArrowRight") show(this.modalIndex + 1);
+      if (e.key === "ArrowLeft") show(this.modalIndex - 1);
+    });
+  },
+
+  // Footer clock
+  startClock() {
+    View.setClock(Model.clockText());
+    setInterval(() => View.setClock(Model.clockText()), 30000);
   },
 
   // Typing effect: types a word, pauses, deletes it, then the next one

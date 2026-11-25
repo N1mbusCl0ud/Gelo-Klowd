@@ -26,6 +26,8 @@ const Model = {
       "Today I help implement SAP Business One. I’m quick to learn, adaptable and reliable, and I like turning everyday office problems into simple tools."
     ],
     email: "angelocastanieto084@gmail.com",
+    location: "Baguio, Philippines",
+    timezone: "Asia/Manila",
     // TODO: replace the "#" with your real profile links
     links: { linkedin: "#", github: "#" },
     // Words the typing effect in the hero cycles through
@@ -36,16 +38,25 @@ const Model = {
   timeline: [
     {
       "role": "IT Support, Networks and Database",
-      "details": "Finance Section - SLU Baguio· Now · Helping implement SAP Business One",
+      "org": "Finance Section",
+      "place": "SLU Baguio",
+      "period": "Now",
+      "summary": "Supporting networks and databases while helping implement SAP Business One.",
       "now": true
     },
     {
       "role": "Quality Assurance Generalist and Administrative",
-      "details": "J&T Express - Legarda, Baguio· After graduation"
+      "org": "J&T Express",
+      "place": "Legarda, Baguio",
+      "period": "After graduation",
+      "summary": "Quality assurance and administrative work."
     },
     {
       "role": "Administrative Aide (Intern)",
-      "details": "HR Office - Municipality of Dilasag, Aurora· First role"
+      "org": "HR Office",
+      "place": "Municipality of Dilasag, Aurora",
+      "period": "First role",
+      "summary": "My internship, and where I first saw how an office runs."
     }
   ],
 
@@ -103,7 +114,8 @@ const Model = {
     }
   ],
 
-  // ----- Projects. Each "art" is a picture name from "illustrations" below -----
+  // ----- Projects. "art" is a picture name from "illustrations" below. "highlights" show in the pop-up.
+  //       Replace link "#" with a real URL (GitHub or live demo) to show a "View project" button -----
   projects: [
     {
       "title": "Human Resource Management System",
@@ -114,7 +126,13 @@ const Model = {
         "HTML",
         "JavaScript"
       ],
-      "art": "hr"
+      "art": "hr",
+      "highlights": [
+        "Records and HR processes live in one system",
+        "Built with PHP, SQL, HTML and JavaScript",
+        "Shaped by my time working in an HR office"
+      ],
+      "link": "#"
     },
     {
       "title": "Job Order Contract Generator",
@@ -124,7 +142,13 @@ const Model = {
         "SQL",
         "JavaScript"
       ],
-      "art": "contract"
+      "art": "contract",
+      "highlights": [
+        "Fills in contract details automatically",
+        "Makes contracts faster to produce and more consistent",
+        "Built with PHP, SQL and JavaScript"
+      ],
+      "link": "#"
     },
     {
       "title": "SAP Business One Ticketing System",
@@ -134,7 +158,13 @@ const Model = {
         "SQL",
         "SAP Business One"
       ],
-      "art": "tickets"
+      "art": "tickets",
+      "highlights": [
+        "Report and track SAP Business One issues and requests in one list",
+        "Built as a web app on top of SQL",
+        "Supports the team during the SAP Business One rollout"
+      ],
+      "link": "#"
     },
     {
       "title": "Implementing SAP Business One",
@@ -144,7 +174,13 @@ const Model = {
         "Networks",
         "Databases"
       ],
-      "art": "sap"
+      "art": "sap",
+      "highlights": [
+        "Support for the Finance Section during the rollout",
+        "Focus on the database and network side",
+        "Ongoing work"
+      ],
+      "link": "#"
     }
   ],
 
@@ -254,6 +290,12 @@ const Model = {
   },
   savedName() { try { return localStorage.getItem("klowd-visitor-name") || ""; } catch (e) { return ""; } },
   topCountries(n) { return Object.entries(this.visitors.countries).sort((a, b) => b[1] - a[1]).slice(0, n); },
+
+  // Footer clock, for example "Baguio, Philippines · 3:42 PM"
+  clockText() {
+    const time = new Date().toLocaleTimeString("en-PH", { hour: "numeric", minute: "2-digit", timeZone: this.profile.timezone });
+    return this.profile.location + " · " + time;
+  },
 
   // ----- Numbers shown in the About section, counted from the data above -----
   stats() {

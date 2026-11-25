@@ -118,6 +118,7 @@ const Effects = {
     document.documentElement.addEventListener("mouseleave", () => ring.classList.remove("on"));
     document.addEventListener("pointerover", e => {
       ring.classList.toggle("big", !!e.target.closest("a, button, .card, .chip, .avatar, input, textarea"));
+      ring.dataset.label = e.target.closest(".card") ? "View" : "";   // the ring says "View" over project cards
     });
     const loop = () => {
       x += (tx - x) * 0.18; y += (ty - y) * 0.18;     // easing makes the ring lag behind a little
