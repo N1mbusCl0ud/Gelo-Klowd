@@ -32,11 +32,13 @@
           <li><a href="#about">About</a></li>
           <li><a href="#skills">Skills</a></li>
           <li><a href="#projects">Projects</a></li>
+          <li><a href="#visitors">Visitors</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </nav>
       <!-- Profile picture: the eyes follow your cursor while it is over this box (see the JavaScript at the bottom).
            To use a real photo instead, replace the <svg> with an <img> tag. -->
+      <button class="kbd" id="paletteBtn" aria-label="Quick navigation (Ctrl K)">Ctrl K</button>
       <div class="avatar" id="avatar" role="img" aria-label="Profile picture of Gelo">
         <svg viewBox="0 0 100 100" aria-hidden="true">
           <rect width="100" height="100" fill="#1d2a3b"/>
@@ -120,6 +122,32 @@
       </div>
     </section>
 
+    <!-- ========== VISITORS ========== -->
+    <section id="visitors">
+      <div class="wrap">
+        <h2>Visitors</h2>
+        <div class="v-grid">
+          <div class="v-stats">
+            <div class="v-count"><b id="visitCount" data-count="0">0</b><span>visits to this portfolio</span></div>
+            <p class="v-mode" id="visitMode"></p>
+            <div class="flags" id="visitFlags"></div>
+            <p class="v-note">Privacy: only the number of visits and the country they come from are counted. No IP addresses or personal details are stored. Signing the guestbook is optional.</p>
+          </div>
+          <div class="v-wall">
+            <!-- Guestbook: visitors who want to be seen can sign here -->
+            <form id="guestForm" class="guest-form">
+              <label>Your name <input type="text" id="gname" name="gname" maxlength="40" required autocomplete="given-name"></label>
+              <label>Say hi (optional) <textarea id="gmsg" name="gmsg" rows="2" maxlength="200"></textarea></label>
+              <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+              <div><button class="btn primary" type="submit">Sign the guestbook</button></div>
+              <p id="guestNote" role="status"></p>
+            </form>
+            <ul class="wall" id="wall"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ========== CONTACT ========== -->
     <section id="contact">
       <div class="wrap">
@@ -156,6 +184,15 @@
   <footer>
     <div class="wrap">© <span id="year"></span> Gelo a.k.a Klowd</div>
   </footer>
+
+  <div class="palette" id="palette" hidden role="dialog" aria-modal="true" aria-label="Quick navigation">
+    <div class="palette-box">
+      <input id="paletteInput" placeholder="Jump to a section or action…" aria-label="Search sections and actions" autocomplete="off">
+      <ul id="paletteList" role="listbox"></ul>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <button class="top" id="topBtn" aria-label="Back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 
   <!-- Load order matters: Model, View, Effects, then Controller -->
   <script src="js/model.js"></script>

@@ -91,12 +91,73 @@ const View = {
 
   // Marks the elements that should fade in as you scroll, and returns them
   markReveal() {
-    const els = [...document.querySelectorAll("section:not(#projects) h2, #aboutText, .timeline li, .skill-group, .contact-box")];
+    const els = [...document.querySelectorAll("section:not(#projects) h2, #aboutText, .timeline li, .skill-group, .contact-box, .v-stats, .guest-form")];
     els.forEach((el, n) => {
       el.classList.add("reveal");
       if (el.matches(".timeline li")) el.style.setProperty("--i", [...el.parentNode.children].indexOf(el));
     });
     return els;
+  },
+
+  // ----- Visitors -----
+  flag(code) {
+    return /^[A-Z]{2}$/.test(code) ? String.fromCodePoint(...[...code].map(c => 127397 + c.charCodeAt(0))) : "";
+  },
+  ago(ts) {
+    const m = Math.round(Math.max(1, (Date.now() - ts) / 1000) / 60);
+    if (m < 1) return "just now";
+    if (m < 60) return m + " min ago";
+    const h = Math.round(m / 60);
+    return h < 24 ? h + " h ago" : Math.round(h / 24) + " d ago";
+  },
+  renderVisitors(v, topCountries) {
+    const count = document.getElementById("visitCount");
+    count.dataset.count = v.visits; delete count.dataset.done;
+    document.getElementById("visitMode").innerHTML = v.live
+      ? '<span class="dot"></span>Live'
+      : "Preview mode: saved in this browser only until the site is connected to Vercel storage";
+    document.getElementById("visitFlags").innerHTML = topCountries.length
+      ? topCountries.map(([code, n]) => `<span class="flag" title="${this.esc(code)}">${this.flag(code) || "🌐"} ${this.esc(code)} · ${n}</span>`).join("")
+      : '<span class="v-note">Countries appear here as people visit.</span>';
+    document.getElementById("wall").innerHTML = v.entries.length
+      ? v.entries.map(e => {
+          const hue = [...e.name].reduce((n, c) => n + c.charCodeAt(0), 0) % 360;   // each name gets its own color
+          const where = [this.flag(e.country), this.ago(e.ts)].filter(Boolean).join(" · ");
+          return `<li class="entry" style="--h:${hue}"><span class="av">${this.esc(e.name[0].toUpperCase())}</span>
+            <div><b>${this.esc(e.name)}</b> <small>${where}</small>${e.message ? "<p>" + this.esc(e.message) + "</p>" : ""}</div></li>`;
+        }).join("")
+      : '<li class="empty">No signatures yet. Be the first to say hi!</li>';
+  },
+  setGuestNote(text) { document.getElementById("guestNote").textContent = text; },
+  prefillName(name) { document.getElementById("gname").value = name; },
+  setGreeting(name) {
+    document.querySelector(".hero .hi").textContent = "Hi " + name + ", I’m Gelo, an IT graduate known online as";
+  },
+  toast(text) {
+    const t = document.getElementById("toast");
+    t.textContent = text; t.classList.add("show");
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+  },
+
+  // ----- Ctrl+K menu -----
+  renderPalette(items, active) {
+    document.getElementById("paletteList").innerHTML = items.length
+      ? items.map((c, i) => `<li role="option" data-i="${i}" class="${i === active ? "active" : ""}"><span>${this.esc(c.label)}</span><small>${this.esc(c.hint || "")}</small></li>`).join("")
+      : '<li class="none">No match</li>';
+  },
+  openPalette() { const p = document.getElementById("palette"); p.hidden = false; const i = document.getElementById("paletteInput"); i.value = ""; i.focus(); },
+  closePalette() { document.getElementById("palette").hidden = true; },
+  paletteIsOpen() { return !document.getElementById("palette").hidden; },
+
+  // ----- Extras -----
+  setParallax(px, py) {   // clouds shift a little with the mouse (each cloud has its own depth)
+    const wrap = document.querySelector(".name-wrap");
+    wrap.style.setProperty("--px", px); wrap.style.setProperty("--py", py);
+  },
+  setTopProgress(percent, show) {
+    const b = document.getElementById("topBtn");
+    b.style.setProperty("--p", percent); b.classList.toggle("show", show);
   },
 
   setYear(year) { this.el.year.textContent = year; },

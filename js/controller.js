@@ -30,6 +30,10 @@ const Controller = {
     this.bindForm();
     this.startTyping();
     this.startEffects();
+    this.startVisitors();
+    this.bindGuestForm();
+    this.bindPalette();
+    document.getElementById("topBtn").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
   },
 
   // Animation and interaction extras (see effects.js)
@@ -66,6 +70,7 @@ const Controller = {
   bindGlow() {
     document.getElementById("home").addEventListener("mousemove", e => {
       View.moveGlow((e.clientX / window.innerWidth - 0.5) * 120, (e.clientY / window.innerHeight - 0.5) * 80);
+      View.setParallax(e.clientX / window.innerWidth - 0.5, e.clientY / window.innerHeight - 0.5);
     });
   },
 
@@ -79,6 +84,7 @@ const Controller = {
                   clamp((e.clientY - (r.top + r.height / 2)) / (r.height / 2)));
     });
     box.addEventListener("pointerleave", () => View.lookAt(0, 0));   // look straight ahead again
+    box.addEventListener("click", () => Effects.cloudBurst(box));    // click the avatar for a surprise
   },
 
   // Page scrolling moves the carousel sideways
@@ -109,7 +115,9 @@ const Controller = {
   bindPageProgress() {
     window.addEventListener("scroll", () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      View.setPageProgress(max > 0 ? window.scrollY / max * 100 : 0);
+      const pct = max > 0 ? window.scrollY / max * 100 : 0;
+      View.setPageProgress(pct);
+      View.setTopProgress(pct, window.scrollY > 600);
     }, { passive: true });
   },
 
@@ -122,6 +130,82 @@ const Controller = {
       window.location.href = Model.mailLink(name, message);
       View.setFormNote("Opening your email app…");
     });
+  },
+
+  // ----- Visitors: count this visit, then show the numbers and the guestbook -----
+  async startVisitors() {
+    const saved = Model.savedName();
+    if (saved) { View.prefillName(saved); View.setGreeting(saved); }   // welcome returning visitors
+    await Model.recordVisit();
+    this.showVisitors(true);
+  },
+  showVisitors(countUp) {
+    View.renderVisitors(Model.visitors, Model.topCountries(8));
+    const box = document.querySelector(".v-stats");
+    if (countUp && box.classList.contains("in")) Effects.countUp(box);   // if it is already on screen, count now
+  },
+  bindGuestForm() {
+    const form = document.getElementById("guestForm");
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+      const data = new FormData(form);
+      if (data.get("website")) return;                    // hidden field: only bots fill it in
+      const name = String(data.get("gname")).trim();
+      View.setGuestNote("Saving…");
+      try {
+        await Model.sign(name, String(data.get("gmsg")));
+        this.showVisitors(false);
+        View.setGuestNote("");
+        form.querySelector("textarea").value = "";
+        View.setGreeting(name);
+        View.toast("Thanks for signing, " + name + "!");
+        Effects.cloudBurst(form.querySelector("button"));
+      } catch (err) {
+        View.setGuestNote(err.message);
+      }
+    });
+  },
+
+  // ----- Ctrl+K quick navigation -----
+  pal: { items: [], active: 0 },
+  bindPalette() {
+    const input = document.getElementById("paletteInput");
+    const refresh = () => {
+      const q = input.value.trim().toLowerCase();
+      this.pal.items = Model.commands.filter(c => c.label.toLowerCase().includes(q));
+      this.pal.active = 0;
+      View.renderPalette(this.pal.items, this.pal.active);
+    };
+    const open = () => { View.openPalette(); refresh(); };
+    document.getElementById("paletteBtn").addEventListener("click", open);
+    input.addEventListener("input", refresh);
+    document.addEventListener("keydown", e => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); View.paletteIsOpen() ? View.closePalette() : open(); return; }
+      if (!View.paletteIsOpen()) return;
+      if (e.key === "Escape") View.closePalette();
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        const n = this.pal.items.length || 1;
+        this.pal.active = (this.pal.active + (e.key === "ArrowDown" ? 1 : n - 1)) % n;
+        View.renderPalette(this.pal.items, this.pal.active);
+      }
+      if (e.key === "Enter" && this.pal.items[this.pal.active]) this.runCommand(this.pal.items[this.pal.active]);
+    });
+    document.getElementById("paletteList").addEventListener("click", e => {
+      const li = e.target.closest("li[data-i]");
+      if (li) this.runCommand(this.pal.items[Number(li.dataset.i)]);
+    });
+    document.getElementById("palette").addEventListener("click", e => { if (e.target.id === "palette") View.closePalette(); });
+  },
+  runCommand(cmd) {
+    View.closePalette();
+    if (cmd.go) { document.querySelector(cmd.go).scrollIntoView({ behavior: "smooth" }); return; }
+    if (cmd.action === "copyEmail") {
+      (navigator.clipboard ? navigator.clipboard.writeText(Model.profile.email) : Promise.reject()).then(
+        () => View.toast("Email copied: " + Model.profile.email), () => View.toast(Model.profile.email));
+    } else if (cmd.action === "linkedin" || cmd.action === "github") {
+      window.open(Model.profile.links[cmd.action], "_blank", "noopener");
+    }
   },
 
   // Typing effect: types a word, pauses, deletes it, then the next one

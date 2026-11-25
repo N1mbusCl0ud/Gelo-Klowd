@@ -41,11 +41,11 @@ const Model = {
     },
     {
       "role": "Quality Assurance Generalist and Administrative",
-      "details": "J&T Express - Legarda Warehouse, Baguio · After graduation"
+      "details": "J&T Express - Legarda, Baguio· After graduation"
     },
     {
       "role": "Administrative Aide (Intern)",
-      "details": "HR Office - Dilasag Municipality, Aurora· First role"
+      "details": "HR Office - Municipality of Dilasag, Aurora· First role"
     }
   ],
 
@@ -106,7 +106,7 @@ const Model = {
   // ----- Projects. Each "art" is a picture name from "illustrations" below -----
   projects: [
     {
-      "title": "Human Resource Management System for Dilasag Municipality",
+      "title": "Human Resource Management System",
       "description": "A system for keeping employee records and HR processes in one place.",
       "tags": [
         "PHP",
@@ -117,7 +117,7 @@ const Model = {
       "art": "hr"
     },
     {
-      "title": "Job Order Contract Generator for Dilasag Municipality",
+      "title": "Job Order Contract Generator",
       "description": "A tool that fills in job order contracts automatically, so they are faster to produce and more consistent.",
       "tags": [
         "PHP",
@@ -127,7 +127,7 @@ const Model = {
       "art": "contract"
     },
     {
-      "title": "SAP Business One Ticketing System for Finance Section - SLU Baguio",
+      "title": "SAP Business One Ticketing System",
       "description": "A ticketing system for reporting and tracking SAP Business One issues and requests.",
       "tags": [
         "Web app",
@@ -137,7 +137,7 @@ const Model = {
       "art": "tickets"
     },
     {
-      "title": "Implementing SAP Business One in the Finance Section - SLU Baguio",
+      "title": "Implementing SAP Business One",
       "description": "Supporting the Finance Section during the SAP Business One rollout, from the database and network side.",
       "tags": [
         "SAP Business One",
@@ -179,6 +179,81 @@ const Model = {
               <g fill="#8fb8ff"><circle cx="70" cy="166" r="4"/><circle cx="160" cy="166" r="4" opacity=".7"/><circle cx="250" cy="166" r="4" opacity=".45"/></g>
             </svg>`
   },
+
+  // ----- Quick actions for the Ctrl+K menu -----
+  commands: [
+    { label: "Go to About", hint: "section", go: "#about" },
+    { label: "Go to Skills", hint: "section", go: "#skills" },
+    { label: "Go to Projects", hint: "section", go: "#projects" },
+    { label: "Go to Visitors", hint: "section", go: "#visitors" },
+    { label: "Go to Contact", hint: "section", go: "#contact" },
+    { label: "Copy my email", hint: "action", action: "copyEmail" },
+    { label: "Open LinkedIn", hint: "link", action: "linkedin" },
+    { label: "Open GitHub", hint: "link", action: "github" },
+    { label: "Back to top", hint: "action", go: "#home" }
+  ],
+
+  // ----- Visitors: data from /api/visitors (live) or from this browser (preview mode) -----
+  visitors: { live: false, visits: 0, countries: {}, entries: [] },
+  demoKey: "klowd-demo-visitors",
+
+  readDemo() {
+    try { return JSON.parse(localStorage.getItem(this.demoKey)) || { visits: 0, countries: {}, entries: [] }; }
+    catch (e) { return { visits: 0, countries: {}, entries: [] }; }
+  },
+  writeDemo(d) { try { localStorage.setItem(this.demoKey, JSON.stringify(d)); } catch (e) {} },
+  demoCountry() { return (navigator.language.split("-")[1] || "").toUpperCase(); },
+
+  // Talks to the server. Without a body it reads (GET); with a body it writes (POST).
+  async api(body) {
+    const res = await fetch("/api/visitors", body
+      ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }
+      : undefined);
+    if (!res.ok) {
+      const info = await res.json().catch(() => ({}));
+      const err = new Error(info.error || "Request failed");
+      err.status = res.status;
+      throw err;
+    }
+    return res.json();
+  },
+
+  async loadVisitors() {
+    try { this.visitors = { live: true, ...(await this.api()) }; }
+    catch (e) { this.visitors = { live: false, ...this.readDemo() }; }   // no server yet: preview mode
+    return this.visitors;
+  },
+
+  // Counts this visit once per browser session
+  async recordVisit() {
+    let seen = false;
+    try { seen = sessionStorage.getItem("klowd-visited"); } catch (e) {}
+    if (seen) return this.loadVisitors();
+    try { sessionStorage.setItem("klowd-visited", "1"); } catch (e) {}
+    try { this.visitors = { live: true, ...(await this.api({ action: "visit" })) }; }
+    catch (e) {
+      const d = this.readDemo(); d.visits++;
+      const c = this.demoCountry(); if (c) d.countries[c] = (d.countries[c] || 0) + 1;
+      this.writeDemo(d); this.visitors = { live: false, ...d };
+    }
+    return this.visitors;
+  },
+
+  async sign(name, message) {
+    name = name.trim().slice(0, 40); message = message.trim().slice(0, 200);
+    try { this.visitors = { live: true, ...(await this.api({ action: "sign", name, message })) }; }
+    catch (e) {
+      if (e.status === 400 || e.status === 429) throw e;    // real answers from the server: show them
+      const d = this.readDemo();                             // otherwise: preview mode
+      d.entries.unshift({ name, message, country: this.demoCountry(), ts: Date.now() });
+      d.entries = d.entries.slice(0, 50);
+      this.writeDemo(d); this.visitors = { live: false, ...d };
+    }
+    try { localStorage.setItem("klowd-visitor-name", name); } catch (e) {}
+    return this.visitors;
+  },
+  savedName() { try { return localStorage.getItem("klowd-visitor-name") || ""; } catch (e) { return ""; } },
+  topCountries(n) { return Object.entries(this.visitors.countries).sort((a, b) => b[1] - a[1]).slice(0, n); },
 
   // ----- Numbers shown in the About section, counted from the data above -----
   stats() {

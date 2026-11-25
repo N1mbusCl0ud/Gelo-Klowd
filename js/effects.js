@@ -160,6 +160,26 @@ const Effects = {
     });
   },
 
+  // ----- A burst of little clouds flying out from an element (click the avatar!) -----
+  cloudBurst(origin) {
+    if (REDUCED) return;
+    const r = origin.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    for (let i = 0; i < 14; i++) {
+      const cloud = document.createElement("span");
+      cloud.textContent = "☁️";
+      cloud.setAttribute("aria-hidden", "true");
+      cloud.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;font-size:${14 + Math.random() * 32}px;line-height:1;pointer-events:none;z-index:60`;
+      document.body.appendChild(cloud);
+      const angle = Math.random() * Math.PI * 2, dist = 80 + Math.random() * 200;
+      cloud.animate([
+        { transform: "translate(-50%,-50%) scale(.3)", opacity: 0 },
+        { opacity: 1, offset: 0.2 },
+        { transform: `translate(calc(-50% + ${Math.cos(angle) * dist}px), calc(-50% + ${Math.sin(angle) * dist - 60}px)) scale(1)`, opacity: 0 }
+      ], { duration: 1300 + Math.random() * 900, easing: "cubic-bezier(.2,.8,.2,1)" }).onfinish = () => cloud.remove();
+    }
+  },
+
   // ----- A glow that follows the cursor inside each skill chip -----
   spotlight(root, selector) {
     if (REDUCED || !FINE_POINTER) return;

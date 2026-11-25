@@ -311,3 +311,77 @@ section:not(#projects) h2.in::after, #projects h2::after { width: 56px; }
   .marquee-track, .cue::after, .pic svg *, .timeline li.now::before { animation: none !important; }
   .skill-group.in .chip { animation: none; }
 }
+
+/* =========================================================
+   v3: visitors, quick menu, toast, back-to-top, more graphics
+   ========================================================= */
+
+/* ----- Visitors section ----- */
+.v-grid { display: grid; grid-template-columns: .9fr 1.3fr; gap: 3rem; }
+.v-count b { display: block; font: 800 clamp(3.5rem, 9vw, 6rem)/1 var(--font-head); color: var(--accent); letter-spacing: -0.03em; }
+.v-count span { color: var(--muted); }
+.v-mode { display: inline-flex; align-items: center; gap: .55rem; margin: 1.2rem 0 0; padding: .3rem .9rem; border: 1px solid var(--line); border-radius: 999px; font-size: .85rem; color: var(--muted); }
+.flags { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.2rem 0; }
+.flag { padding: .3rem .8rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: .9rem; transition: border-color .2s, transform .2s; }
+.flag:hover { border-color: var(--accent); transform: translateY(-2px); }
+.v-note { color: var(--muted); font-size: .85rem; margin: 0; }
+.guest-form { max-width: none; margin-bottom: 1.5rem; }
+.guest-form p { color: var(--accent); margin: 0; min-height: 1.4em; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }   /* hidden field that catches spam bots */
+.wall { list-style: none; margin: 0; padding: 0 .25rem 0 0; display: grid; gap: .8rem; max-height: 440px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+.entry { display: grid; grid-template-columns: auto 1fr; gap: .9rem; padding: 1rem; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); animation: slidein .5s cubic-bezier(.2,.8,.2,1) both; transition: border-color .2s, translate .2s; }
+.entry:hover { border-color: var(--accent); translate: 4px 0; }
+.entry .av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font: 700 1rem var(--font-head); background: hsl(var(--h) 50% 24%); color: hsl(var(--h) 85% 82%); }
+.entry small { color: var(--muted); margin-left: .4rem; }
+.entry p { margin: .25rem 0 0; color: var(--muted); overflow-wrap: anywhere; }
+.wall .empty { color: var(--muted); padding: 1rem; border: 1px dashed var(--line); border-radius: 14px; }
+@keyframes slidein { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+@media (max-width: 760px) { .v-grid { grid-template-columns: 1fr; gap: 2rem; } }
+
+/* ----- Ctrl+K quick menu ----- */
+.kbd { margin-left: 1rem; padding: .35rem .7rem; border: 1px solid var(--line); border-radius: 8px; background: transparent; color: var(--muted); font: 500 .8rem var(--font-body); cursor: pointer; transition: color .2s, border-color .2s; }
+.kbd:hover { color: var(--accent); border-color: var(--accent); }
+@media (max-width: 900px) { .kbd { display: none; } }
+.palette { position: fixed; inset: 0; z-index: 60; display: flex; justify-content: center; align-items: flex-start; padding-top: 18vh; background: rgba(5,8,12,.65); backdrop-filter: blur(6px); }
+.palette[hidden] { display: none; }
+.palette-box { width: min(560px, 92%); background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,.5); animation: slidein .25s ease both; }
+.palette-box input { width: 100%; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; padding: 1.1rem 1.3rem; font-size: 1.05rem; }
+.palette-box ul { list-style: none; margin: 0; padding: .4rem; max-height: 320px; overflow-y: auto; }
+.palette-box li { display: flex; justify-content: space-between; padding: .7rem .9rem; border-radius: 10px; cursor: pointer; }
+.palette-box li small { color: var(--muted); }
+.palette-box li.active, .palette-box li:hover { background: rgba(143,184,255,.14); color: var(--accent); }
+.palette-box li.none { color: var(--muted); cursor: default; }
+
+/* ----- Toast and back-to-top ----- */
+.toast { position: fixed; left: 50%; bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); z-index: 70; padding: .7rem 1.2rem; border: 1px solid var(--accent); border-radius: 999px; background: var(--surface); translate: -50% 20px; opacity: 0; pointer-events: none; transition: opacity .3s, translate .3s; }
+.toast.show { opacity: 1; translate: -50% 0; }
+.top { position: fixed; right: 1.25rem; bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)); z-index: 40; width: 48px; height: 48px; border: 0; border-radius: 50%; padding: 0; cursor: pointer; color: var(--text);
+  background: conic-gradient(var(--accent) calc(var(--p, 0) * 1%), var(--line) 0);   /* ring fills as you scroll */
+  opacity: 0; translate: 0 16px; pointer-events: none; transition: opacity .3s, translate .3s, scale .2s; }
+.top::before { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--bg); }
+.top svg { position: relative; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.top.show { opacity: 1; translate: 0 0; pointer-events: auto; }
+.top:hover { scale: 1.1; }
+
+/* ----- Clouds drift with the mouse (each at its own depth) ----- */
+.cloud { translate: calc(var(--px, 0) * var(--k, 0) * 1px) calc(var(--py, 0) * var(--k, 0) * 1px); transition: translate .5s ease-out; }
+.c1 { --k: -90; } .c2 { --k: 70; } .c3 { --k: -40; } .c4 { --k: 50; } .c5 { --k: -60; } .c6 { --k: 30; }
+
+/* ----- Contact box: glowing border that travels around it ----- */
+@property --a { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+.contact-box {
+  border: 1px solid transparent;
+  background: linear-gradient(var(--surface), var(--surface)) padding-box,
+              conic-gradient(from var(--a), var(--line) 0 65%, var(--accent) 85%, var(--line) 100%) border-box;
+  animation: borderspin 7s linear infinite;
+}
+@keyframes borderspin { to { --a: 360deg; } }
+
+/* ----- Section headings: soft shimmer on the underline ----- */
+h2::after { background: linear-gradient(90deg, var(--accent), #c9dcff, var(--accent)) !important; background-size: 200% 100% !important; animation: shimmer 3s linear infinite; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .entry, .palette-box, h2::after, .contact-box { animation: none; }
+  .cloud { translate: none; }
+}
