@@ -41,7 +41,7 @@ const Model = {
     },
     {
       "role": "Quality Assurance Generalist and Administrative",
-      "details": "J&T Express - Legarda Warehouse, Bgauio · After graduation"
+      "details": "J&T Express - Legarda Warehouse, Baguio · After graduation"
     },
     {
       "role": "Administrative Aide (Intern)",
