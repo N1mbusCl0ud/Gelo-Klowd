@@ -25,7 +25,7 @@ const Model = {
       "My path began as an intern in the HR Office. After graduating, I worked as a Quality Assurance Generalist and in administration at J&T Express, and I’m now in IT support for networks and databases in the Finance Section.",
       "Today I help implement SAP Business One. I’m quick to learn, adaptable and reliable, and I like turning everyday office problems into simple tools."
     ],
-    email: "gelo@gmail.com",
+    email: "angelocastanieto084@gmail.com",
     // TODO: replace the "#" with your real profile links
     links: { linkedin: "#", github: "#" },
     // Words the typing effect in the hero cycles through
@@ -36,16 +36,16 @@ const Model = {
   timeline: [
     {
       "role": "IT Support, Networks and Database",
-      "details": "Finance Section · Now · Helping implement SAP Business One",
+      "details": "Finance Section - SLU Baguio· Now · Helping implement SAP Business One",
       "now": true
     },
     {
       "role": "Quality Assurance Generalist and Administrative",
-      "details": "J&T Express · After graduation"
+      "details": "J&T Express - Legarda Warehouse, Bgauio · After graduation"
     },
     {
       "role": "Administrative Aide (Intern)",
-      "details": "HR Office · First role"
+      "details": "HR Office - Dilasag Municipality, Aurora· First role"
     }
   ],
 
@@ -106,7 +106,7 @@ const Model = {
   // ----- Projects. Each "art" is a picture name from "illustrations" below -----
   projects: [
     {
-      "title": "Human Resource Management System",
+      "title": "Human Resource Management System for Dilasag Municipality",
       "description": "A system for keeping employee records and HR processes in one place.",
       "tags": [
         "PHP",
@@ -117,7 +117,7 @@ const Model = {
       "art": "hr"
     },
     {
-      "title": "Job Order Contract Generator",
+      "title": "Job Order Contract Generator for Dilasag Municipality",
       "description": "A tool that fills in job order contracts automatically, so they are faster to produce and more consistent.",
       "tags": [
         "PHP",
@@ -127,7 +127,7 @@ const Model = {
       "art": "contract"
     },
     {
-      "title": "SAP Business One Ticketing System",
+      "title": "SAP Business One Ticketing System for Finance Section - SLU Baguio",
       "description": "A ticketing system for reporting and tracking SAP Business One issues and requests.",
       "tags": [
         "Web app",
@@ -137,7 +137,7 @@ const Model = {
       "art": "tickets"
     },
     {
-      "title": "Implementing SAP Business One",
+      "title": "Implementing SAP Business One in the Finance Section - SLU Baguio",
       "description": "Supporting the Finance Section during the SAP Business One rollout, from the database and network side.",
       "tags": [
         "SAP Business One",
