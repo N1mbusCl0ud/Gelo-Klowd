@@ -29,7 +29,7 @@ const Model = {
     location: "Baguio, Philippines",
     timezone: "Asia/Manila",
     // TODO: replace the "#" with your real profile links
-    links: { linkedin: "#", github: "#" },
+    links: { linkedin: "linkedin.com/in/angelo-castanieto-045787290", github: "https://github.com/N1mbusCl0ud" },
     // Words the typing effect in the hero cycles through
     roles: ["IT support", "networks", "databases", "SAP Business One", "web basics"]
   },
